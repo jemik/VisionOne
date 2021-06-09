@@ -3,8 +3,8 @@
 ### **Install instructions.**
 pip install -r requirements.txt \
 Go get Authentication token from Vision One \
-Paste into main.py **AUTH_TOKEN = "YOUR TOKEN"** 
-###**Usage.**
+Paste into main.py **AUTH_TOKEN = "YOUR TOKEN"** \
+### **Usage.**
 
 `usage: main.py [-h] [-f FILE] [--documentPassword DOCUMENTPASSWORD] [--archivePassword ARCHIVEPASSWORD] [-t TASK] [-r REPORT] [-i INVESTIGATIONPACKAGE] [-s SUSPICIOUSOBJECT]
 `
