@@ -4,6 +4,7 @@
 pip install -r requirements.txt \
 Go get Authentication token from Vision One \
 Paste into main.py **AUTH_TOKEN = "YOUR TOKEN"** \
+Change **BASE_URL** if needed. 
 ### **Usage.**
 
 `usage: main.py [-h] [-f FILE] [--documentPassword DOCUMENTPASSWORD] [--archivePassword ARCHIVEPASSWORD] [-t TASK] [-r REPORT] [-i INVESTIGATIONPACKAGE] [-s SUSPICIOUSOBJECT]
