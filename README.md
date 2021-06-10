@@ -1,7 +1,7 @@
 # VisionOne
 ### **Update.**
 
-Virustotal file look up added in Get Suspicious Objects.
+Virustotal file look up added in Get Suspicious Objects. \
 Hybrid Analysis file look up added in Get Suspicious Objects.
 
 ### **Install instructions.**
