@@ -26,8 +26,9 @@ LOG_FILE = "{}.log".format(TODAY)
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 logging.basicConfig(filename=LOG_FILE, level=logging.INFO)
-AUTH_TOKEN = ""
-VT_API_KEY = ""
+AUTH_TOKEN = "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJjaWQiOiIyOGQ2ZTNkNS05ZTA2LTQ2YzItOWFlNC0wOTM1NGExNThlMzYiLCJjcGlkIjoic3ZwIiwicHBpZCI6ImN1cyIsIml0IjoxNjIzMTM2OTc5LCJ1aWQiOiJpbm1hdGUxMzM3QHByb3Rvbm1haWwuY29tIiwicGwiOiIiLCJldCI6MTY1NDY3Mjk3OX0.lAW2r0YcXquaTmRGzRXA4aXc7fUoROB5zb1G29NgfM-XTPEa-tajwQ052zeIBQ5hyGsneE5BURZLEhDHGrp7bi2TtxsW3ntSLSEXkE-L2K3cvmtE-zQk4jIRt_pnXYfQ2egcv1YGw9FpnlJ2pFBTrYuCONqgC9D51Ntgb5Z2YmtFnkER7zrbe-ws742rrgYmYzev3KwGXQFYCL3xFx4zYWOyYrglvOQ2Agn6zufpqgp-MjpY4O-s1bH_w3ay8fx_Oq2Xop9pzlJC7n0Jv8xLC51tYabc2KtMOmIw_ctsXzI8CXiFMidSaxzRo0lCDZEBrGxIawb01IMXwq6WPrep1LykSLI6nR-WtE28tK4qVWEEFpqHE92MfkbJKrcQS9UsAZJ4or-4oNYfOmVtwdRLo1n4Kg8logyFnqov5cUqVW24OiGtp8qUVsUk_U_SGcxu-g77HJJepER85h6UZNuqxcPjA2kViw5rnIo6b1N-1heYzdoopyZ8f5evVF312FN_zBvqr6KgrZHS7vyK7AyO0xTg1O3H8bobR1q_zTeBraK2YM3zFLi4USIn4DYUL0K1lmkJ3_Gln5eYLPSBhqhF8NTxcZt8F_RT69yKQN5z2hRyoZbv-EaBzC4ehGGauPRJz-pVWf9OxDM3GBb9qarUcnu9fWHAOBV_H8kL2_hWRkk"
+VT_API_KEY = "7daeeed301adb194170623307de5f789ccd617146d08ebc55dc7206f6562ffbe"
+HYBRID_ANA_KEY = "z0hmlts9c0270ac2q16wakym425577b6qzkdwhj7d858d7795l1t32xb9553372c"
 DELAY = 10
 BASE_URL = "https://api.eu.xdr.trendmicro.com/beta/xdr/sandbox/"
 HEADERS = {
@@ -39,6 +40,33 @@ HEADERS_B = {
 }
 PAYLOAD = {}
 
+def hybrid_ana(search):
+    url = "https://hybrid-analysis.com/api/v2/search/hash"
+
+    payload = {'hash': search}
+    files = [
+
+    ]
+    headers = {
+        'User-Agent': 'Falcon Sandbox',
+        'api-key': HYBRID_ANA_KEY
+    }
+
+    response = requests.request("POST", url, headers=headers, data=payload, files=files)
+    ret = response.json()
+    logger.info("{} : message: [{}].".format(datetime.datetime.now(), response.json()))
+    if ret:
+        ha = ({'submit_name': ret[0]['submit_name'],
+               'ssdeep': ret[0]['ssdeep'],
+               'imphash': ret[0]['imphash'],
+               'analysis_start_time': ret[0]['analysis_start_time'],
+               'av_detect': ret[0]['av_detect'],
+               'threat_score': ret[0]['threat_score'],
+               'verdict': ret[0]['verdict'],
+               })
+        return ha
+    else:
+        return {'message': 'Hash not in Hybrid Analysis.'}
 
 def simple_vt_report(search):
     vt_report = {}
@@ -83,6 +111,7 @@ def encode(string):
 
 
 def file_submit(fname, documentPassword, archivePassword):
+    PAYLOAD = {}
     if documentPassword:
         PAYLOAD = {'documentPassword': encode(documentPassword)}
     if archivePassword:
@@ -149,6 +178,16 @@ def get_so(reportId):
                 except Exception as e:
                     print(colored("{'message': 'Did not get any result from VT.', 'reason': 'Depending on the no. of requests, we might have hit a timeout.', 'logfile': "+LOG_FILE+"}", 'red'))
                     logger.error("{} : {}".format(datetime.datetime.now(), e))
+                print("Checking File hash", colored('[{}]'.format(_s['value']), 'yellow'),
+                  "against Hybrid Analysis. Hang on{}".format(dot))
+                try:
+                    print(colored('{}'.format(hybrid_ana(_s['value'])), 'white'))
+                except:
+                    print(colored(
+                        "{'message': 'Did not get any result from Hybrid Analysis.', 'reason': 'Check logs.', 'logfile': " + LOG_FILE + "}",
+                        'red'))
+                    logger.error("{} : {}".format(datetime.datetime.now(), e))
+
     except Exception as ex:
         logger.error("{} : {}".format(datetime.datetime.now(), ex))
         pass
