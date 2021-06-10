@@ -41,32 +41,36 @@ HEADERS_B = {
 PAYLOAD = {}
 
 def hybrid_ana(search):
-    url = "https://hybrid-analysis.com/api/v2/search/hash"
+    if HYBRID_ANA_KEY:
+        url = "https://hybrid-analysis.com/api/v2/search/hash"
 
-    payload = {'hash': search}
-    files = [
+        payload = {'hash': search}
+        files = [
 
-    ]
-    headers = {
-        'User-Agent': 'Falcon Sandbox',
-        'api-key': HYBRID_ANA_KEY
-    }
+        ]
+        headers = {
+            'User-Agent': 'Falcon Sandbox',
+            'api-key': HYBRID_ANA_KEY
+        }
 
-    response = requests.request("POST", url, headers=headers, data=payload, files=files)
-    ret = response.json()
-    logger.info("{} : message: [{}].".format(datetime.datetime.now(), response.json()))
-    if ret:
-        ha = ({'submit_name': ret[0]['submit_name'],
-               'ssdeep': ret[0]['ssdeep'],
-               'imphash': ret[0]['imphash'],
-               'analysis_start_time': ret[0]['analysis_start_time'],
-               'av_detect': ret[0]['av_detect'],
-               'threat_score': ret[0]['threat_score'],
-               'verdict': ret[0]['verdict'],
-               })
-        return ha
+        response = requests.request("POST", url, headers=headers, data=payload, files=files)
+        ret = response.json()
+        logger.info("{} : message: [{}].".format(datetime.datetime.now(), response.json()))
+        if ret:
+            ha = ({'submit_name': ret[0]['submit_name'],
+                   'ssdeep': ret[0]['ssdeep'],
+                'imphash': ret[0]['imphash'],
+                'analysis_start_time': ret[0]['analysis_start_time'],
+                'av_detect': ret[0]['av_detect'],
+                'threat_score': ret[0]['threat_score'],
+                'verdict': ret[0]['verdict'],
+                })
+            return ha
+        else:
+            return {'message': 'Hash not in Hybrid Analysis.'}
     else:
-        return {'message': 'Hash not in Hybrid Analysis.'}
+        logger.error("{} : message: Please check your Hybrid Analysis API key.".format(datetime.datetime.now()))
+        return {'message': 'message: Please check your Hybrid Analysis  API key'}
 
 def simple_vt_report(search):
     vt_report = {}
