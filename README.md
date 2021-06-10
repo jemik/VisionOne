@@ -1,9 +1,13 @@
 # VisionOne
+### **Update.**
+
+Virustotal file look up added in Get Suspicious Objects.
 
 ### **Install instructions.**
 pip install -r requirements.txt \
 Go get Authentication token from Vision One \
 Paste into main.py **AUTH_TOKEN = "YOUR TOKEN"** \
+**Optional**: Virustotal lookup. Add your API key to  **VT_API_KEY = "YOUR VT API Key"** \
 Change **BASE_URL** if needed. 
 ### **Usage.**
 
