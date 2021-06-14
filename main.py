@@ -40,6 +40,23 @@ HEADERS_B = {
 }
 PAYLOAD = {}
 
+def abuse_ch(search):
+    url = "https://mb-api.abuse.ch/api/v1/"
+
+    payload = {'query': 'get_info',
+               'hash': search}
+    files = [
+
+    ]
+    headers = {}
+
+    response = requests.request("POST", url, headers=headers, data=payload, files=files)
+
+    ret = response.json()
+    logger.info("{} : message: [{}].".format(datetime.datetime.now(), response.json()))
+
+    return ret
+
 def hybrid_ana(search):
     if HYBRID_ANA_KEY:
         url = "https://hybrid-analysis.com/api/v2/search/hash"
@@ -189,6 +206,15 @@ def get_so(reportId):
                 except:
                     print(colored(
                         "{'message': 'Did not get any result from Hybrid Analysis.', 'reason': 'Check logs.', 'logfile': " + LOG_FILE + "}",
+                        'red'))
+                    logger.error("{} : {}".format(datetime.datetime.now(), e))
+                print("Checking File hash", colored('[{}]'.format(_s['value']), 'yellow'),
+                      "against Malware bazaar (abuse.ch). Hang on{}".format(dot))
+                try:
+                    print(colored('{}'.format(abuse_ch(_s['value'])), 'white'))
+                except:
+                    print(colored(
+                        "{'message': 'Did not get any result from Malware Bazaar', 'reason': 'Check logs.', 'logfile': " + LOG_FILE + "}",
                         'red'))
                     logger.error("{} : {}".format(datetime.datetime.now(), e))
 
