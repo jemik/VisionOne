@@ -2,7 +2,8 @@
 ### **Update.**
 
 Virustotal file look up added in Get Suspicious Objects. \
-Hybrid Analysis file look up added in Get Suspicious Objects.
+Hybrid Analysis file look up added in Get Suspicious Objects. \
+Added Malware bazaar (abuse.ch) API to threat intel (Get Suspicious Objects). 
 
 ### **Install instructions.**
 pip install -r requirements.txt \
